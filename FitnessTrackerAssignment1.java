@@ -1,109 +1,113 @@
-class WorkoutPlan {
+import java.util.*;
+
+// Abstract class for different workout types (Data Abstraction)
+abstract class ExercisePlan {
     private String name;
-    private int durationInMinutes; // Duration of the workout in minutes
-    private int caloriesBurned;
+    private int duration;
 
-    public WorkoutPlan(String name, int durationInMinutes, int caloriesBurned) {
+    public ExercisePlan(String name, int duration) {
         this.name = name;
-        this.durationInMinutes = durationInMinutes;
-        this.caloriesBurned = caloriesBurned;
+        this.duration = duration;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+    public int getDuration() { return duration; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getDurationInMinutes() {
-        return durationInMinutes;
-    }
-
-    public void setDurationInMinutes(int durationInMinutes) {
-        this.durationInMinutes = durationInMinutes;
-    }
-
-    public int getCaloriesBurned() {
-        return caloriesBurned;
-    }
-
-    public void setCaloriesBurned(int caloriesBurned) {
-        this.caloriesBurned = caloriesBurned;
-    }
+    public abstract int getCaloriesBurned(); // Polymorphism
 
     @Override
     public String toString() {
-        return "WorkoutPlan{" +
-                "name='" + name + '\'' +
-                ", durationInMinutes=" + durationInMinutes +
-                ", caloriesBurned=" + caloriesBurned +
-                '}';
+        return name + " - " + duration + " mins, " + getCaloriesBurned() + " calories";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        ExercisePlan that = (ExercisePlan) obj;
+        return duration == that.duration && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, duration);
+    }
+}
+
+// Subclass for specific workout plans (Inheritance)
+class WorkoutPlan extends ExercisePlan {
+    private int calories;
+
+    public WorkoutPlan(String name, int duration, int calories) {
+        super(name, duration);
+        this.calories = calories;
+    }
+
+    @Override
+    public int getCaloriesBurned() {
+        return calories;
     }
 }
 
 class User {
     private String name;
     private int age;
-    private double weight;
+    private List<ExercisePlan> plans;
 
-    public User(String name, int age, double weight) {
+    public User(String name, int age) {
         this.name = name;
         this.age = age;
-        this.weight = weight;
+        this.plans = new ArrayList<>();
     }
 
-    public String getName() {
-        return name;
+    public String getName() { return name; }
+    public int getAge() { return age; }
+    public List<ExercisePlan> getPlans() { return plans; }
+
+    public void addWorkout(ExercisePlan plan) {
+        plans.add(plan);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void showPlans() {
+        plans.forEach(System.out::println);
     }
 
-    public int getAge() {
-        return age;
+    public void sortPlansByDuration() { // Sort
+        plans.sort(Comparator.comparingInt(ExercisePlan::getDuration));
     }
 
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                ", weight=" + weight +
-                '}';
+    public ExercisePlan searchPlanByName(String searchName) { // Search
+        return plans.stream()
+                    .filter(p -> p.getName().equalsIgnoreCase(searchName))
+                    .findFirst()
+                    .orElse(null);
     }
 }
 
-class FitnessApp {
-    private static final String APP_NAME = "Fitness Tracker";
+public class Fitness {
     public static void main(String[] args) {
-        WorkoutPlan workout1 = new WorkoutPlan("Morning Yoga", 30, 150);
-        WorkoutPlan workout2 = new WorkoutPlan("Cardio Blast", 45, 300);
+        User user1 = new User("Murat", 30);
+        user1.addWorkout(new WorkoutPlan("Strength Training", 60, 400));
+        user1.addWorkout(new WorkoutPlan("Cardio Blast", 45, 300));
 
-        User user1 = new User("Ayanat", 25, 65.0);
-        User user2 = new User("Murat", 30, 80.5);
+        User user2 = new User("Ayanat", 25);
+        user2.addWorkout(new WorkoutPlan("Morning Yoga", 30, 150));
+        user2.addWorkout(new WorkoutPlan("Evening Run", 50, 350));
 
-        System.out.println(APP_NAME);
-        System.out.println(user1);
-        System.out.println(workout1);
-        System.out.println(user2);
-        System.out.println(workout2);
+        System.out.println("User: " + user1.getName() + ", Age: " + user1.getAge());
+        System.out.println("Workout Plans:");
+        user1.showPlans();
 
-        System.out.println("Comparing workout plans: " + workout1.equals(workout2));
-        System.out.println("Comparing users: " + user1.equals(user2));
+        System.out.println("\nUser: " + user2.getName() + ", Age: " + user2.getAge());
+        System.out.println("Workout Plans:");
+        user2.showPlans();
+
+        System.out.println("\nSorted Workout Plans by Duration for " + user1.getName() + ":");
+        user1.sortPlansByDuration();
+        user1.showPlans();
+
+        System.out.println("\nSearching for 'Strength Training' for " + user2.getName() + ":");
+        ExercisePlan foundPlan = user2.searchPlanByName("Strength Training");
+        System.out.println(foundPlan != null ? foundPlan : "Plan not found");
     }
 }
