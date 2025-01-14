@@ -1,13 +1,37 @@
 import java.util.*;
 
 class WorkoutPlan {
-    String name;
-    int duration;
-    int calories;
+    private String name;
+    private int duration;
+    private int calories;
 
-    WorkoutPlan(String name, int duration, int calories) {
+    public WorkoutPlan(String name, int duration, int calories) {
         this.name = name;
         this.duration = duration;
+        this.calories = calories;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public int getCalories() {
+        return calories;
+    }
+
+    public void setCalories(int calories) {
         this.calories = calories;
     }
 
@@ -18,56 +42,50 @@ class WorkoutPlan {
 }
 
 class User {
-    String name;
-    int age;
-    List<WorkoutPlan> plans = new ArrayList<>();
+    private String name;
+    private int age;
 
-    User(String name, int age) {
+    public User(String name, int age) {
         this.name = name;
         this.age = age;
     }
 
-    void addWorkout(WorkoutPlan plan) {
-        plans.add(plan);
+    public String getName() {
+        return name;
     }
 
-    void showPlans() {
-        plans.forEach(System.out::println);
+    public void setName(String name) {
+        this.name = name;
     }
 
-    void sortPlansByDuration() {
-        plans.sort(Comparator.comparingInt(p -> p.duration));
+    public int getAge() {
+        return age;
     }
 
-    WorkoutPlan searchPlanByName(String searchName) {
-        return plans.stream().filter(p -> p.name.equalsIgnoreCase(searchName)).findFirst().orElse(null);
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "User: " + name + ", Age: " + age;
     }
 }
 
-public class Fitness {
+public class FitnessApp {
     public static void main(String[] args) {
+        WorkoutPlan plan1 = new WorkoutPlan("Strength Training", 60, 400);
+        WorkoutPlan plan2 = new WorkoutPlan("Cardio Blast", 45, 300);
+
         User user1 = new User("Murat", 30);
-        user1.addWorkout(new WorkoutPlan("Strength Training", 60, 400));
-        user1.addWorkout(new WorkoutPlan("Cardio Blast", 45, 300));
-
         User user2 = new User("Ayanat", 25);
-        user2.addWorkout(new WorkoutPlan("Morning Yoga", 30, 150));
-        user2.addWorkout(new WorkoutPlan("Evening Run", 50, 350));
 
-        System.out.println("User: " + user1.name + ", Age: " + user1.age);
-        System.out.println("Workout Plans:");
-        user1.showPlans();
+        System.out.println(user1);
+        System.out.println(plan1);
+        System.out.println(user2);
+        System.out.println(plan2);
 
-        System.out.println("\nUser: " + user2.name + ", Age: " + user2.age);
-        System.out.println("Workout Plans:");
-        user2.showPlans();
-
-        System.out.println("\nSorted Workout Plans by Duration for " + user1.name + ":");
-        user1.sortPlansByDuration();
-        user1.showPlans();
-
-        System.out.println("\nSearching for 'Strength Training' for " + user2.name + ":");
-        WorkoutPlan foundPlan = user2.searchPlanByName("Strength Training");
-        System.out.println(foundPlan != null ? foundPlan : "Plan not found");
+        System.out.println("\nComparing workout plans:");
+        System.out.println("Are plan1 and plan2 equal? " + plan1.getName().equals(plan2.getName()));
     }
 }
